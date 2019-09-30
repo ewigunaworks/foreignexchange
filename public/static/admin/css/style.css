@@ -1300,3 +1300,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 .font-25 {
   font-size: 25px;
 }
+
+.closed {
+  display: none;
+}

@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import axios from 'axios'
 import $ from 'jquery'
 import cc from 'currency-codes'
+import Select from 'react-select'
 
 let Config = require('../config')
  
@@ -12,12 +13,26 @@ class Home extends Component {
 		this.state = {
 			currencies: ['IDR', 'EUR', 'GBP', 'SGD'],
 			currency: '10',
-			rates: []
+			newcurr: '',
+			rates: [],
+			options: [
+				{ value: 'USD', label: 'USD'},
+				{ value: 'CAD', label: 'CAD'},
+				{ value: 'IDR', label: 'IDR'},
+				{ value: 'GBP', label: 'GBP'},
+				{ value: 'CHF', label: 'CHF'},
+				{ value: 'SGD', label: 'SGD'},
+				{ value: 'INR', label: 'INR'},
+				{ value: 'MYR', label: 'MYR'},
+				{ value: 'JPY', label: 'JPY'},
+				{ value: 'KRW', label: 'KRW'},
+			]
 		}
 
 		this.handleGetCurrency = this.handleGetCurrency.bind(this)
 		this.handleChanges = this.handleChanges.bind(this)
 		this.handleRemoveCodes = this.handleRemoveCodes.bind(this)
+		this.handleChangeSelect = this.handleChangeSelect.bind(this)
 	}
 
 	componentDidMount() {
@@ -29,6 +44,11 @@ class Home extends Component {
 				    event.preventDefault();
 				}
 			});
+
+			$('.btn-add-more').on('click', function() {
+				$('.select-currencies').removeClass('closed');
+				$('.btn-add-more').addClass('closed');
+			})
 		})
 	}
 
@@ -53,6 +73,12 @@ class Home extends Component {
 
 	handleChanges(e) {
 		this.setState({ [e.target.name]: e.target.value })
+	}
+
+	handleChangeSelect(e) {
+		this.setState({
+			newcurr: e.value
+		})
 	}
 
 	handleGetRates(codes) {
@@ -80,7 +106,7 @@ class Home extends Component {
 	}
 
 	render() {
-		console.log(this.state.currencies)
+		console.log(this.state.newcurr)
 		return (
 		  <React.Fragment>
 			<section id="intro">
@@ -132,7 +158,7 @@ class Home extends Component {
 															</div>
 														</div>
 														<div class="col-2">
-															<a href="javascript:void(0)" class="btn btn-primary" onClick={() => this.handleRemoveCodes(data) }>-</a>
+															<a href="javascript:void(0)" class="btn btn-danger" onClick={() => this.handleRemoveCodes(data) }>-</a>
 														</div>
 													</div>
 												</div>
@@ -141,6 +167,23 @@ class Home extends Component {
 									)
 								})
 							}
+						</div>
+						<div class="row align-items-center justify-content-center btn-add-more">
+							<div class="col-4 text-center">
+								<a href="javascript:void(0)" class="btn btn-primary">Add More Currencies</a>
+							</div>
+						</div>
+						<div class="row align-items-center justify-content-center select-currencies closed">
+							<div class="col-4">
+								<div class="row">
+									<div class="col-8 px-1">
+										<Select options={this.state.options} onChange={this.handleChangeSelect} />
+									</div>
+									<div class="col-2 px-0">
+										<a href="javascript:void(0)" class="btn btn-success">Submit</a>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</section>
