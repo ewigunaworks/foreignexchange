@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import axios from 'axios'
+import $ from 'jquery'
 import cc from 'currency-codes'
 
 let Config = require('../config')
@@ -16,11 +17,19 @@ class Home extends Component {
 
 		this.handleGetCurrency = this.handleGetCurrency.bind(this)
 		this.handleChanges = this.handleChanges.bind(this)
+		this.handleRemoveCodes = this.handleRemoveCodes.bind(this)
 	}
 
 	componentDidMount() {
-		console.log(this.handleGetRates('EUR'))
 		this.handleGetCurrency()
+
+		$(document).ready(function () {
+			$('#currency').keypress(function(event) {
+				if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+				    event.preventDefault();
+				}
+			});
+		})
 	}
 
 	handleGetCurrency() {
@@ -56,8 +65,22 @@ class Home extends Component {
 		return currencynow.toFixed(2)
 	}
 
+	handleRemoveCodes(codes) {
+		console.log('want to remove : '+codes)
+		let currencies = this.state.currencies
+		for(let x in currencies) {
+			if(currencies[x] == codes) {
+				currencies.splice(x, 1)
+			}
+		}
+
+		this.setState({
+			currencies: currencies
+		})
+	}
+
 	render() {
-		console.log(this.state.rates['EUR'])
+		console.log(this.state.currencies)
 		return (
 		  <React.Fragment>
 			<section id="intro">
@@ -109,7 +132,7 @@ class Home extends Component {
 															</div>
 														</div>
 														<div class="col-2">
-															<a href="javascript:void(0)" class="btn btn-primary">-</a>
+															<a href="javascript:void(0)" class="btn btn-primary" onClick={() => this.handleRemoveCodes(data) }>-</a>
 														</div>
 													</div>
 												</div>
