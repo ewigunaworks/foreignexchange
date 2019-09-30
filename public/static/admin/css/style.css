@@ -1292,3 +1292,11 @@ body.mobile-nav-active #mobile-nav-toggle {
     text-align: center;
   }
 }
+
+.font-12 {
+  font-size: 12px;
+}
+
+.font-25 {
+  font-size: 25px;
+}

@@ -51,6 +51,11 @@ class Home extends Component {
 		return Number(val).toFixed(4)
 	}
 
+	handleConvertCurrency(value1, value2) {
+		let currencynow = Number(value1) * Number(value2)
+		return currencynow.toFixed(2)
+	}
+
 	render() {
 		console.log(this.state.rates['EUR'])
 		return (
@@ -93,11 +98,11 @@ class Home extends Component {
 													<div class="row">
 														<div class="col-10">
 															<div class="row">
-																<div class="col-6"><b>{data}</b></div>
-																<div class="col-6">14400000</div>
+																<div class="col-6"><p class="mb-0"><b>{data}</b></p></div>
+																<div class="col-6"><p class="font-25 mb-0">{this.handleConvertCurrency(this.state.currency, this.handleGetRates(data))}</p></div>
 															</div>
 															<div class="row">
-																<div class="col-12"><em>{data} - {this.handleConvertCodes(data)}</em></div>
+																<div class="col-12"><p class="mb-0 font-12"><b><em>{data} - {this.handleConvertCodes(data)}</em></b></p></div>
 															</div>
 															<div class="row">
 																<div class="col-12">1 USD = {data} {this.handleGetRates(data)} </div>
