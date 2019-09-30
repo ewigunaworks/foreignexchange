@@ -10,15 +10,16 @@ class Home extends Component {
 
 		this.state = {
 			currencies: ['IDR', 'EUR', 'GBP', 'SGD'],
-			defaultcurr: '10'
+			currency: '10',
+			rates: []
 		}
 
 		this.handleGetCurrency = this.handleGetCurrency.bind(this)
-		// this.handleConvertCodes = this.handleConvertCodes.bind(this)
+		this.handleChanges = this.handleChanges.bind(this)
 	}
 
 	componentDidMount() {
-		console.log(this.handleConvertCodes('USD'))
+		console.log(this.handleGetRates('EUR'))
 		this.handleGetCurrency()
 	}
 
@@ -30,7 +31,10 @@ class Home extends Component {
 	        method: 'GET',
 	        timeout: Config.TIMEOUT
 	    }).then(function (response) {
-	        console.log(response)
+	        self.setState({
+	        	rates: response.data.rates,
+	        	date: response.data.date
+	        })
 	    })
 	}
 
@@ -38,7 +42,17 @@ class Home extends Component {
 		return cc.code(codes).currency
 	}
 
+	handleChanges(e) {
+		this.setState({ [e.target.name]: e.target.value })
+	}
+
+	handleGetRates(codes) {
+		let val = this.state.rates[codes]
+		return Number(val).toFixed(4)
+	}
+
 	render() {
+		console.log(this.state.rates['EUR'])
 		return (
 		  <React.Fragment>
 			<section id="intro">
@@ -62,31 +76,43 @@ class Home extends Component {
 						<div class="row">
 							<div class="col-12 text-center">
 								<p class="mb-1"><em>USD - {this.handleConvertCodes('USD')}</em></p>
-								<div class="row align-items-center justify-content-center">
+								<div class="row align-items-center justify-content-center m-2">
 									<p class="mb-1"><b>USD&nbsp;&nbsp;&nbsp;</b></p>
-									<input class="text-right" type="text" value={this.state.defaultcurr} />
+									<input class="text-right" type="text" id="currency" name="currency" value={this.state.currency} onChange={this.handleChanges} placeholder="Enter Nominal" />
 								</div>
 							</div>
+							<hr />
 						</div>
 						<div class="row">
-							<div class="col-lg-6 about-img wow fadeInLeft">
-								<img src="img/about-img.jpg" alt="" />
-							</div>
-							<div class="col-lg-6 content wow fadeInRight">
-								<h2>Lorem ipsum dolor sit amet, consectetur adipiscing elite storium paralate</h2>
-								<h3>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h3>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ullamco laboris nisi ut aliquip ex ea commodo consequat.
-								</p>
-								<ul>
-									<li><i class="ion-android-checkmark-circle"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-									<li><i class="ion-android-checkmark-circle"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-									<li><i class="ion-android-checkmark-circle"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
-								</ul>
-								<p>
-									Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum Libero justo laoreet sit amet cursus sit amet dictum sit. Commodo sed egestas egestas fringilla phasellus faucibus scelerisque eleifend donec
-								</p>
-							</div>
+							{
+								this.state.currencies.map((data, i) => {
+									return(
+										<div class="col-lg-4 col-md-6 col-sm-12 mb-1">
+											<div class="card">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-10">
+															<div class="row">
+																<div class="col-6"><b>{data}</b></div>
+																<div class="col-6">14400000</div>
+															</div>
+															<div class="row">
+																<div class="col-12"><em>{data} - {this.handleConvertCodes(data)}</em></div>
+															</div>
+															<div class="row">
+																<div class="col-12">1 USD = {data} {this.handleGetRates(data)} </div>
+															</div>
+														</div>
+														<div class="col-2">
+															<a href="javascript:void(0)" class="btn btn-primary">-</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									)
+								})
+							}
 						</div>
 					</div>
 				</section>
