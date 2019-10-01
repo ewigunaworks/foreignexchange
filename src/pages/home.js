@@ -3,6 +3,7 @@ import axios from 'axios'
 import $ from 'jquery'
 import cc from 'currency-codes'
 import Select from 'react-select'
+import PopupNotification from '../components/popup/popup-notification'
 
 let Config = require('../config')
  
@@ -14,6 +15,7 @@ class Home extends Component {
 			currencies: ['IDR', 'EUR', 'GBP', 'SGD'],
 			currency: '10',
 			newcurr: '',
+			isNotif: false,
 			rates: [],
 			options: [
 				{ value: 'USD', label: 'USD'},
@@ -33,6 +35,8 @@ class Home extends Component {
 		this.handleChanges = this.handleChanges.bind(this)
 		this.handleRemoveCodes = this.handleRemoveCodes.bind(this)
 		this.handleChangeSelect = this.handleChangeSelect.bind(this)
+		this.handleAddNewCurrency = this.handleAddNewCurrency.bind(this)
+		this.handleFromParent = this.handleFromParent.bind(this)
 	}
 
 	componentDidMount() {
@@ -105,8 +109,32 @@ class Home extends Component {
 		})
 	}
 
+	handleAddNewCurrency(codes) {
+		let currencies = this.state.currencies
+		console.log(currencies.indexOf(codes))
+		if(currencies.indexOf(codes) != -1) {
+			console.log('sini')
+			this.setState({
+				isNotif: true
+			})
+			
+		} else {
+			currencies.push(codes)
+		}
+
+		this.setState({
+			currencies: currencies
+		}, this.handleGetCurrency())
+	}
+
+	handleFromParent(isError, isNotif) {
+		this.setState({
+			isError: isError,
+			isNotif: isNotif
+		})
+	}
+
 	render() {
-		console.log(this.state.newcurr)
 		return (
 		  <React.Fragment>
 			<section id="intro">
@@ -168,20 +196,18 @@ class Home extends Component {
 								})
 							}
 						</div>
-						<div class="row align-items-center justify-content-center btn-add-more">
-							<div class="col-4 text-center">
+						<div class="row align-items-center justify-content-center btn-add-more pt-2">
+							<div class="col-sm-12 text-center">
 								<a href="javascript:void(0)" class="btn btn-primary">Add More Currencies</a>
 							</div>
 						</div>
-						<div class="row align-items-center justify-content-center select-currencies closed">
-							<div class="col-4">
-								<div class="row">
-									<div class="col-8 px-1">
+						<div class="row align-items-center justify-content-center select-currencies closed pt-2">
+							<div class="col-sm-12">
+								<div class="row align-items-center justify-content-center">
+									<div class="mx-2 w-50">
 										<Select options={this.state.options} onChange={this.handleChangeSelect} />
 									</div>
-									<div class="col-2 px-0">
-										<a href="javascript:void(0)" class="btn btn-success">Submit</a>
-									</div>
+									<a href="javascript:void(0)" class="btn btn-success mx-2" onClick={() => this.handleAddNewCurrency(this.state.newcurr)}>Submit</a>
 								</div>
 							</div>
 						</div>
@@ -203,6 +229,10 @@ class Home extends Component {
 				  </div>
 				</div>
 			</footer>
+			{
+				this.state.isNotif &&
+				<PopupNotification handleFromParent={this.handleFromParent} isError={true} />
+			}
 			<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 		</React.Fragment>
 		);
