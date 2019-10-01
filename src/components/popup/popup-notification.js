@@ -45,7 +45,7 @@ export default class PopupNotification extends React.Component {
                         <div class="p-2 text-white">
                             <div class="d-flex justify-content-center">
                                 <div class="d-flex align-items-center justify-content-end">
-                                    <p class="mb-0 pr-3">Failed to add new currency!<br/> Currency already exist.</p>
+                                    <p class="mb-0 pr-3">{this.props.message}</p>
                                     <h3 class="popup-bottom-notification-close mb-0" onClick={this.handleClick}>OK</h3>
                                 </div>
                             </div>

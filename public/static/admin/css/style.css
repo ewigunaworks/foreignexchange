@@ -1336,13 +1336,12 @@ body.mobile-nav-active #mobile-nav-toggle {
 
 .popup-center-content {
   position: fixed;
-  width: 85%;
+  width: 100%;
   height: auto;
   background-color: #ffffff;
   z-index: 99999;
-    bottom: 30%;
-    left: 27px;
-    border-radius: 10px;
+  bottom: 30%;
+  border-radius: 10px;
   transition: all .5s;
 }
 

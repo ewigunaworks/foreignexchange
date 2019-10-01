@@ -16,6 +16,8 @@ class Home extends Component {
 			currency: '10',
 			newcurr: '',
 			isNotif: false,
+			message: '',
+			isError: false,
 			rates: [],
 			options: [
 				{ value: 'USD', label: 'USD'},
@@ -44,7 +46,7 @@ class Home extends Component {
 
 		$(document).ready(function () {
 			$('#currency').keypress(function(event) {
-				if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+				if ((event.which !== 46 || $(this).val().indexOf('.') !== -1) && (event.which < 48 || event.which > 57)) {
 				    event.preventDefault();
 				}
 			});
@@ -96,30 +98,11 @@ class Home extends Component {
 	}
 
 	handleRemoveCodes(codes) {
-		console.log('want to remove : '+codes)
 		let currencies = this.state.currencies
 		for(let x in currencies) {
-			if(currencies[x] == codes) {
+			if(currencies[x] === codes) {
 				currencies.splice(x, 1)
 			}
-		}
-
-		this.setState({
-			currencies: currencies
-		})
-	}
-
-	handleAddNewCurrency(codes) {
-		let currencies = this.state.currencies
-		console.log(currencies.indexOf(codes))
-		if(currencies.indexOf(codes) != -1) {
-			console.log('sini')
-			this.setState({
-				isNotif: true
-			})
-			
-		} else {
-			currencies.push(codes)
 		}
 
 		this.setState({
@@ -127,10 +110,36 @@ class Home extends Component {
 		}, this.handleGetCurrency())
 	}
 
+	handleAddNewCurrency(codes) {
+		let currencies = this.state.currencies
+		if(codes !== '') {
+			if(currencies.indexOf(codes) !== -1) {
+				this.setState({
+					isNotif: true,
+					isError: true,
+					message: 'Currency Already Exist!'
+				})
+				
+			} else {
+				currencies.push(codes)
+				this.setState({
+					currencies: currencies
+				}, this.handleGetCurrency())
+			}
+		} else {
+			this.setState({
+				isNotif: true,
+				isError: true,
+				message: 'Select New Currency First!'
+			})
+		}
+	}
+
 	handleFromParent(isError, isNotif) {
 		this.setState({
 			isError: isError,
-			isNotif: isNotif
+			isNotif: isNotif,
+			message: ''
 		})
 	}
 
@@ -165,37 +174,45 @@ class Home extends Component {
 							</div>
 							<hr />
 						</div>
-						<div class="row">
-							{
-								this.state.currencies.map((data, i) => {
-									return(
-										<div class="col-lg-4 col-md-6 col-sm-12 mb-1">
-											<div class="card">
-												<div class="card-body">
-													<div class="row">
-														<div class="col-10">
-															<div class="row">
-																<div class="col-6"><p class="mb-0"><b>{data}</b></p></div>
-																<div class="col-6"><p class="font-25 mb-0">{this.handleConvertCurrency(this.state.currency, this.handleGetRates(data))}</p></div>
+						{
+							this.state.currencies.length > 0 ?
+								<div class="row">
+								{
+									this.state.currencies.map((data, i) => {
+										return(
+											<div class="col-lg-4 col-md-6 col-sm-12 mb-1">
+												<div class="card">
+													<div class="card-body">
+														<div class="row">
+															<div class="col-10">
+																<div class="row">
+																	<div class="col-6"><p class="mb-0"><b>{data}</b></p></div>
+																	<div class="col-6"><p class="font-25 mb-0">{this.handleConvertCurrency(this.state.currency, this.handleGetRates(data))}</p></div>
+																</div>
+																<div class="row">
+																	<div class="col-12"><p class="mb-0 font-12"><b><em>{data} - {this.handleConvertCodes(data)}</em></b></p></div>
+																</div>
+																<div class="row">
+																	<div class="col-12">1 USD = {data} {this.handleGetRates(data)} </div>
+																</div>
 															</div>
-															<div class="row">
-																<div class="col-12"><p class="mb-0 font-12"><b><em>{data} - {this.handleConvertCodes(data)}</em></b></p></div>
+															<div class="col-2">
+																<a href="javascript:void(0)" class="btn btn-danger" onClick={() => this.handleRemoveCodes(data) }>-</a>
 															</div>
-															<div class="row">
-																<div class="col-12">1 USD = {data} {this.handleGetRates(data)} </div>
-															</div>
-														</div>
-														<div class="col-2">
-															<a href="javascript:void(0)" class="btn btn-danger" onClick={() => this.handleRemoveCodes(data) }>-</a>
 														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-									)
-								})
-							}
-						</div>
+										)
+									})
+								}
+								</div>
+							:
+							<div class="row align-items-center justify-content-center">
+								<h3 class="text-center p-3">Oops.. There is no currency right now!</h3>
+							</div>
+						}
+						
 						<div class="row align-items-center justify-content-center btn-add-more pt-2">
 							<div class="col-sm-12 text-center">
 								<a href="javascript:void(0)" class="btn btn-primary">Add More Currencies</a>
@@ -217,13 +234,13 @@ class Home extends Component {
 
 			<footer id="footer">
 				<div class="container">
-					<div class="row">
-						<div class="col-lg-6 text-lg-left text-center">
-							<div class="copyright">
+					<div class="row justify-content-center align-items-center">
+						<div class="col-lg-6 text-lg-left">
+							<div class="copyright text-center">
 								&copy; 2019 <strong>Erwin Wiguna</strong>.
 							</div>
 							<div class="credits">
-								<p><small>ewings</small></p>
+								<p class="text-center"><small>ewings</small></p>
 							</div>
 						</div>
 				  </div>
@@ -231,7 +248,7 @@ class Home extends Component {
 			</footer>
 			{
 				this.state.isNotif &&
-				<PopupNotification handleFromParent={this.handleFromParent} isError={true} />
+				<PopupNotification handleFromParent={this.handleFromParent} isError={this.state.isError} message={this.state.message} />
 			}
 			<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 		</React.Fragment>
