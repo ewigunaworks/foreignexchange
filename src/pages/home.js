@@ -180,7 +180,7 @@ class Home extends Component {
 								{
 									this.state.currencies.map((data, i) => {
 										return(
-											<div class="col-lg-4 col-md-6 col-sm-12 mb-1">
+											<div class="col-lg-4 col-md-6 col-sm-12 mb-1" key={i}>
 												<div class="card">
 													<div class="card-body">
 														<div class="row">
